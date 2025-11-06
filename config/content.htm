@@ -1,435 +1,132 @@
-<h1>About</h1>
-<p>課程名稱: 計算機程式</p>
+<h1>關於</h1>
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">課程名稱：電腦程式</span></span></span></span></p>
 <p><span></span></p>
-<p>小組倉儲：<a href="https://github.com/41423230zhang/Group2_work">https://github.com/41423230zhang/Group2_work</a></p>
-<p>小組網站：<a href="https://41423230zhang.github.io/Group2_work/content/index.html">https://41423230zhang.github.io/Group2_work/content/index.html</a></p>
-<p>小組報告：<a href="https://41423230zhang.github.io/Group2_work/my_presentation.html#/">https://41423230zhang.github.io/Group2_work/my_presentation.html#/</a></p>
-<p>課程評分:</p>
-<p style="padding-left: 30px;"><span style="background-color: #ffff00;">學習心得報告 (60%)</span> - MS Teams 線上參與，<span style="background-color: #ccffcc;">6人一組</span>每三週發表學習心得。</p>
-<p style="padding-left: 60px;">w3、w7、w10、w14、w17、w18</p>
-<p style="padding-left: 60px;">學習心得報告主題:</p>
-<p style="padding-left: 60px;">w3: 什麼是 git, GitHub, gist 與 cmsimde? 如何使用這些工具？為什麼要使用這些工具？ (<a href="https://mde.tw/cp2025/content/Brython.html?src=https://gist.githubusercontent.com/mdecycu/71ff1c69dd233e6a5a83dd60997950de/raw/b4134dc3724f9c6aa1de7534a74f298288de0fa5/round_dot_move.py">動態模擬</a>)</p>
-<p style="padding-left: 60px;">w7: Brython 是什麼？如何在瀏覽器配置 Brython 環境？ Brython 能做什麼？ (<a href="https://mde.tw/cp2025/content/Brython.html">Brython</a>, <a href="https://mde.tw/cp2025/content/Robot_ex.html">Examples</a>)</p>
-<p style="padding-left: 60px;">w10: 如何在瀏覽器中模擬機器人作動？ (<a href="https://mde.tw/cp2025/content/Brython.html?src=https://gist.githubusercontent.com/mdecycu/58fed8bd2f5be98a6456a8dcae512011/raw/4019adba4ee4be19c35982d835bad8e7d83a7b2f/brython_robot4_ex1.py">機器人作動</a>)</p>
-<p style="padding-left: 60px;">w14: 在瀏覽器中模擬機器人作動的目的是什麼？ (<a href="/downloads/otto_robot.7z">otto_robot.7z</a>, <a href="https://mde.tw/cad2025/content/Homework.html">Plotter</a>, <a href="/downloads/open_duck_mini.7z">open_duck_mini.7z</a> ,<a href="https://webots.cloud/AcTNYs0">https://webots.cloud/AcTNYs0</a>)</p>
-<p style="padding-left: 60px;">w17 (<span style="background-color: #ccffcc;">1b 採 Youtube 影片簡報</span>): 計算機程式課程學到了什麼？</p>
-<p style="padding-left: 60px;">w18: 課程總結</p>
-<p style="padding-left: 30px;"><span style="background-color: #ffff00;">個人與分組網站維護 (40%)</span> - 每週至少兩次推送與課程進度相關的學習內容與心得。</p>
-<p style="padding-left: 60px;">w9 期中自評、w18 期末自評</p><h1>Group2_Code</h1>
-<p><a href="https://mde.tw/cp2025/content/Brython.html?src=https://gist.githubusercontent.com/41423230zhang/18a8fe927a52bc66dfb5a8b42778b4be/raw/eddc652ded99c1ad0a21d7a5f821e92e63a9987a/">python</a></p>
-<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">from browser import document, html, timer
-
-CELL_SIZE = 40
-WALL_THICKNESS = 6
-IMG_PATH = "https://mde.tw/cp2025/reeborg/src/images/"
-
-class World:
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-        self.layers = self._create_layers()
-        self._init_html()
-        self._draw_grid()
-        self._draw_walls()
-    def _create_layers(self):
-        return {
-            "grid": html.CANVAS(width=self.width * CELL_SIZE, height=self.height * CELL_SIZE),
-            "walls": html.CANVAS(width=self.width * CELL_SIZE, height=self.height * CELL_SIZE),
-            "objects": html.CANVAS(width=self.width * CELL_SIZE, height=self.height * CELL_SIZE),
-            "robots": html.CANVAS(width=self.width * CELL_SIZE, height=self.height * CELL_SIZE),
-        }
-
-    def _init_html(self):
-        container = html.DIV(style={
-            "position": "relative",
-            "width": f"{self.width * CELL_SIZE}px",
-            "height": f"{self.height * CELL_SIZE}px"
-        })
-        for z, canvas in enumerate(self.layers.values()):
-            canvas.style = {
-                "position": "absolute",
-                "top": "0px",
-                "left": "0px",
-                "zIndex": str(z)
-            }
-            container &lt;= canvas
-        document["brython_div1"].clear()
-        document["brython_div1"] &lt;= container
-    def _draw_grid(self):
-        ctx = self.layers["grid"].getContext("2d")
-        ctx.strokeStyle = "#cccccc"
-        for i in range(self.width + 1):
-            ctx.beginPath()
-            ctx.moveTo(i * CELL_SIZE, 0)
-            ctx.lineTo(i * CELL_SIZE, self.height * CELL_SIZE)
-            ctx.stroke()
-        for j in range(self.height + 1):
-            ctx.beginPath()
-            ctx.moveTo(0, j * CELL_SIZE)
-            ctx.lineTo(self.width * CELL_SIZE, j * CELL_SIZE)
-            ctx.stroke()
-
-    def _draw_image(self, ctx, src, x, y, w, h, offset_x=0, offset_y=0):
-        img = html.IMG()
-        img.src = src
-        def onload(evt):
-            px = x * CELL_SIZE + offset_x
-            py = (self.height - 1 - y) * CELL_SIZE + offset_y
-            ctx.drawImage(img, px, py, w, h)
-        img.bind("load", onload)
-    def _draw_walls(self):
-        ctx = self.layers["walls"].getContext("2d")
-        for x in range(self.width):
-            # 北牆：最上方（貼在頂格子正上緣）
-            self._draw_image(ctx, IMG_PATH + "north.png", x, self.height - 1,
-                             CELL_SIZE, WALL_THICKNESS, offset_y=0)
-            # 南牆：最下方（貼在底格子正下緣）
-            self._draw_image(ctx, IMG_PATH + "north.png", x, 0,
-                             CELL_SIZE, WALL_THICKNESS, offset_y=CELL_SIZE - WALL_THICKNESS)
-        for y in range(self.height):
-            # 西牆：最左邊（貼格子內側左緣）
-            self._draw_image(ctx, IMG_PATH + "east.png", 0, y,
-                             WALL_THICKNESS, CELL_SIZE, offset_x=0)
-            # 東牆：最右邊（貼格子內側右緣）
-            self._draw_image(ctx, IMG_PATH + "east.png", self.width - 1, y,
-                             WALL_THICKNESS, CELL_SIZE, offset_x=CELL_SIZE - WALL_THICKNESS)
-
-    def robot(self, x, y):
-        ctx = self.layers["robots"].getContext("2d")
-        self._draw_image(ctx, IMG_PATH + "blue_robot_e.png", x - 1, y - 1,
-                         CELL_SIZE, CELL_SIZE)
-
-class AnimatedRobot:
-    def __init__(self, world, x, y):
-        self.world = world
-        self.x = x - 1
-        self.y = y - 1
-        self.facing = "E"
-        self.facing_order = ["E", "N", "W", "S"]
-        self.robot_ctx = world.layers["robots"].getContext("2d")
-        self.trace_ctx = world.layers["objects"].getContext("2d")
-        self.queue = []
-        self.running = False
-        self._draw_robot()
-
-    def _robot_image(self):
-        return {
-            "E": "blue_robot_e.png",
-            "N": "blue_robot_n.png",
-            "W": "blue_robot_w.png",
-            "S": "blue_robot_s.png"
-        }[self.facing]
-
-    def _draw_robot(self):
-        self.robot_ctx.clearRect(0, 0, self.world.width * CELL_SIZE, self.world.height * CELL_SIZE)
-        self.world._draw_image(self.robot_ctx, IMG_PATH + self._robot_image(),
-                               self.x, self.y, CELL_SIZE, CELL_SIZE)
-
-    def _draw_trace(self, from_x, from_y, to_x, to_y):
-        ctx = self.trace_ctx
-        ctx.strokeStyle = "#d33"
-        ctx.lineWidth = 2
-        ctx.beginPath()
-        fx = from_x * CELL_SIZE + CELL_SIZE / 2
-        fy = (self.world.height - 1 - from_y) * CELL_SIZE + CELL_SIZE / 2
-        tx = to_x * CELL_SIZE + CELL_SIZE / 2
-        ty = (self.world.height - 1 - to_y) * CELL_SIZE + CELL_SIZE / 2
-        ctx.moveTo(fx, fy)
-        ctx.lineTo(tx, ty)
-        ctx.stroke()
-
-    def move(self, steps):
-        def action(next_done):
-            def step():
-                nonlocal steps
-                if steps == 0:
-                    next_done()
-                    return
-                from_x, from_y = self.x, self.y
-                dx, dy = 0, 0
-                if self.facing == "E":
-                    dx = 1
-                elif self.facing == "W":
-                    dx = -1
-                elif self.facing == "N":
-                    dy = 1
-                elif self.facing == "S":
-                    dy = -1
-                next_x = self.x + dx
-                next_y = self.y + dy
-    
-                # ✅ 邊界檢查
-                if 0 &lt;= next_x &lt; self.world.width and 0 &lt;= next_y &lt; self.world.height:
-                    self.x, self.y = next_x, next_y
-                    self._draw_trace(from_x, from_y, self.x, self.y)
-                    self._draw_robot()
-                    steps -= 1
-                    timer.set_timeout(step, 200)
-                else:
-                    print("🚨 已經撞牆，停止移動！")
-                    next_done()
-            step()
-        self.queue.append(action)
-        self._run_queue()
-
-    def turn_left(self):
-        def action(done):
-            idx = self.facing_order.index(self.facing)
-            self.facing = self.facing_order[(idx + 1) % 4]
-            self._draw_robot()
-            timer.set_timeout(done, 300)
-        self.queue.append(action)
-        self._run_queue()
-
-    def _run_queue(self):
-        if self.running or not self.queue:
-            return
-        self.running = True
-        action = self.queue.pop(0)
-        action(lambda: self._done())
-
-    def _done(self):
-        self.running = False
-        self._run_queue()
-
-# 初始化世界與機器人
-# 利用 robot 物件中的 World 方法
-# 建立一個 10x10 的模擬世界
-xx=11
-yy=9
-w = robot.World(xx,yy)
-x = xx//2
-y = yy-1
-z = xx
-k = yy
-# 利用 robot 物件的 AnimatedRobot 方法
-# 針對 w 進行動態模擬, 且讓機器人位於 (1, 1)
-r = robot.AnimatedRobot(w, 1, 1)
-################################################
-# 範例 1
-# 基本變數與數值操作
-################################################
-# r 為透過上列程式所建立的動態模擬機器人物件
-steps = 3
-# 讓機器人往前移動 steps 步數
-def turn_left():
-    r.turn_left()
-    r.turn_left()
-    r.turn_left()
-for two_line in range(x):
-    r.turn_left()
-    r.move(y)
-    turn_left()
-    r.move(1)
-    turn_left()
-    r.move(y)
-    r.turn_left()
-    r.move(1)
-if z % 2 != 0:
-    r.turn_left()
-    r.move(k-1)</pre>
-<p><a href="https://mde.tw/cp2025/content/Brython.html?src=https://gist.githubusercontent.com/41423230zhang/1c8c4011f44ccd928fdc17145cd4953b/raw/028acdc9d69aa6987cd16035e3d54b2851761247/1b_w4_showup.py">1b_w4_showup.py</a></p>
-<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">import pandas as pd
-
-# === 讀取全班學生名單（學號\t姓名） ===
-stud_df = pd.read_csv("1b_stud_list.csv", encoding='utf-8')
-stud_df.drop_duplicates(subset=[stud_df.columns[0]], inplace=True)
-
-# 建立姓名→學號字典
-name_to_num = {}
-for row in stud_df.iloc[:, 0]:
-    parts = row.split('\t')
-    if len(parts) &gt;= 2:
-        student_num = parts[0].strip()
-        student_name = parts[1].strip()
-        name_to_num[student_name] = student_num
-
-# === 讀取出席名單 ===
-show_df = pd.read_csv("1b_w4.csv", encoding='utf-16')
-show_df.drop_duplicates(subset=[show_df.columns[0]], inplace=True)
-names_list = show_df.iloc[:, 0].dropna().tolist()
-
-# 將出席姓名轉為學號
-showup_nums = []
-for name in names_list:
-    if isinstance(name, str):
-        student_name = name.split('\t')[0].strip()  # 只取姓名部分
-        if student_name in name_to_num:
-            showup_nums.append(name_to_num[student_name])
-
-# 去重並依學號排序
-showup_nums = sorted(list(set(showup_nums)), key=lambda x: int(x))
-
-# === 輸出 CSV ===
-pd.DataFrame(showup_nums, columns=["學號"]).to_csv("1b_w4_showup.csv", index=False, encoding="utf-8-sig")
-
-print(f"✅ 已將出席名單轉為學號並輸出至 1b_w4_showup.csv，共 {len(showup_nums)} 位學生")</pre>
-<p><a href="https://mde.tw/cp2025/content/Brython.html?src=https://gist.githubusercontent.com/41423230zhang/4992d44ff4ecf05004a407317ff758e4/raw/2f84203834910a83467c526318821e299b6d5b57/1b_stud_list.py">1b_w4_list.py</a></p>
-<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">import pandas as pd
-
-# === 讀取全班學生名單 ===
-stud_df = pd.read_csv("1b_stud_list.csv", encoding='utf-8')
-stud_df.drop_duplicates(subset=[stud_df.columns[0]], inplace=True)
-
-# 建立姓名→學號字典
-a_dict = {}
-for row in stud_df.iloc[:, 0]:
-    parts = row.split('\t')
-    if len(parts) &gt;= 2:
-        student_num = parts[0].strip()
-        student_name = parts[1].strip()
-        a_dict[student_name] = student_num
-
-# 全部學生名單
-all_students = set(a_dict.keys())
-
-# === 讀取出席名單 ===
-show_df = pd.read_csv("1b_w4.csv", encoding='utf-16')
-show_df.drop_duplicates(subset=[show_df.columns[0]], inplace=True)
-names_list = show_df.iloc[:, 0].dropna().tolist()
-
-# 整理出席名單
-showup_names = set()
-for entry in names_list:
-    if isinstance(entry, str):
-        parts = entry.split('\t')
-        student_name = parts[0].strip() if len(parts) &gt;= 1 else entry.strip()
-        if student_name:
-            showup_names.add(student_name)
-
-# === 比對出席與缺席 ===
-present_names = showup_names &amp; all_students
-absent_names = all_students - showup_names
-
-# 轉換成列表（學號、姓名）
-# 這裡加上 key=lambda x: int(x[0])，依學號數值排序
-present_list = sorted([(a_dict[name], name) for name in present_names], key=lambda x: int(x[0]))
-absent_list = sorted([(a_dict[name], name) for name in absent_names], key=lambda x: int(x[0]))
-
-# === 輸出結果 ===
-print("✅ 出席名單（依座號排序）：")
-for i, (num, name) in enumerate(present_list, start=1):
-    print(f"{i:2d}. {num}\t{name}")
-
-print("\n❌ 缺席名單（依座號排序）：")
-for i, (num, name) in enumerate(absent_list, start=1):
-    print(f"{i:2d}. {num}\t{name}")
-
-# === 輸出 CSV ===
-pd.DataFrame(present_list, columns=["學號", "姓名"]).to_csv("1b_present.csv", index=False, encoding="utf-8-sig")
-pd.DataFrame(absent_list, columns=["學號", "姓名"]).to_csv("1b_absent.csv", index=False, encoding="utf-8-sig")
-
-print("\n📁 已輸出兩份檔案：1b_present.csv（出席）與 1b_absent.csv（缺席）")</pre>
-<p></p><h1>Project</h1>
-<p>既存技術:</p>
-<p style="padding-left: 30px;"><a href="https://github.com/scrum-1/respysive-slide">https://github.com/scrum-1/respysive-slide</a> (功能最完整，可以與許多 Python 模組結合)</p>
-<p style="padding-left: 30px;"><a href="https://github.com/tavallaie/pyreveal">https://github.com/tavallaie/pyreveal</a> </p>
-<p style="padding-left: 30px;"><a href="https://github.com/naviddianati/python-reveal">https://github.com/naviddianati/python-reveal</a> </p>
-<p style="padding-left: 30px;"><a href="https://github.com/apiad/auditorium">https://github.com/apiad/auditorium</a> </p>
-<p>專案簡介：分散式 Reveal.js 簡報編輯系統</p>
-<p>這是一個使用 Flask 所建立的 Web 編輯器，用於多人協作編輯 Reveal.js 簡報內容（以 Markdown 撰寫），並透過 Git 作為儲存與版本控制工具。每位使用者可在本地端啟動編輯介面，修改後使用自己的 GitHub Token 或 SSH 金鑰來 git push 到遠端分支，藉此保留作者身分與提交記錄。</p>
-<p>整個系統的設計理念為：</p>
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">小組專案：<a href="https://github.com/41423242a/Group8">https://github.com/41423242a/Group8</a></span></span></span></span></p>
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">網站小組：</span></span><a href="https://41423242a.github.io/Group8/content/index.html"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">https://41423242a.github.io/Group8/content/index.html</span></span></a></span></span></p>
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">報告小組：</span></span></span></span></p>
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">課程評分:</span></span></span></span></p>
+<p style="padding-left: 30px;"><span style="background-color: #ffff00;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">學習心得報告 (60%)</span></span></span></span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"> - MS Teams 線上參與，</span></span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">每三週</span></span></span></span><span style="background-color: #ccffcc;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">6人一組發表學習心得。</span></span></span></span></span><span dir="auto" style="vertical-align: inherit;"></span></p>
+<p style="padding-left: 60px;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">w3、w7、w10、w14、w17、w18</span></span></span></span></p>
+<p style="padding-left: 60px;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">學習心得報告主題：</span></span></span></span></p>
+<p style="padding-left: 60px;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">w3：什麼是git、GitHub、gist和cmsimde？如何使用這些工具？為什麼要使用這些工具？ （</span></span></span></span><a href="https://mde.tw/cp2025/content/Brython.html?src=https://gist.githubusercontent.com/mdecycu/71ff1c69dd233e6a5a83dd60997950de/raw/b4134dc3724f9c6aa1de7534a74f298288de0fa5/round_dot_move.py"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">動態模擬</span></span></span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">）</span></span></span></span></p>
+<p style="padding-left: 60px;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">w7: Brython 是什麼？如何在瀏覽器配置 Brython 環境？ Brython 能做什麼？ ( </span></span></span></span><a href="https://mde.tw/cp2025/content/Brython.html"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">Brython</span></span></span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"> , </span></span></span></span><a href="https://mde.tw/cp2025/content/Robot_ex.html"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">Examples</span></span></span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"> )</span></span></span></span></p>
+<p style="padding-left: 60px;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">w10: 如何在瀏覽器中模擬機器人作動？ (</span></span></span></span><a href="https://mde.tw/cp2025/content/Brython.html?src=https://gist.githubusercontent.com/mdecycu/58fed8bd2f5be98a6456a8dcae512011/raw/4019adba4ee4be19c35982d835bad8e7d83a7b2f/brython_robot4_ex1.py"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">機器人作動</span></span></span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">)</span></span></span></span></p>
+<p style="padding-left: 60px;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">w14: 在瀏覽器中模擬機器人作動的目的為何？ ( </span></span></span></span><a href="/downloads/otto_robot.7z"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">otto_robot.7z</span></span></span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"> ,  </span></span></span></span><a href="https://mde.tw/cad2025/content/Homework.html"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">Plotter</span></span></span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"> ,  </span></span></span></span><a href="/downloads/open_duck_mini.7z"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">open_duck_mini.7z</span></span></span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"> , </span></span></span></span><a href="https://webots.cloud/AcTNYs0"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">https://webots.cloud/AcTNYs0</span></span></span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"> )</span></span></span></span></p>
+<p style="padding-left: 60px;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">w17 ( </span></span></span></span><span style="background-color: #ccffcc;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">1b 採 Youtube 影片簡報</span></span></span></span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">)：電腦課程課程學到了什麼？</span></span></span></span></p>
+<p style="padding-left: 60px;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">w18: 課程總結</span></span></span></span></p>
+<p style="padding-left: 30px;"><span style="background-color: #ffff00;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">個人與分組網站維護（40%）</span></span></span></span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"> -每週至少兩次與詳細課程相關的學習內容與心得。</span></span></span></span></p>
+<p style="padding-left: 60px;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">w9期中自評、w18期末自評</span></span></span></span></p>
+<p><a href="https://mde.tw/cp2025/content/Brython.html?src=https://gist.githubusercontent.com/41423230zhang/1c8c4011f44ccd928fdc17145cd4953b/raw/028acdc9d69aa6987cd16035e3d54b2851761247/1b_w4_showup.py"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"></span></span></a></p>
+<p></p><h1>專案</h1>
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">已存技術：</span></span></p>
+<p style="padding-left: 30px;"><a href="https://github.com/scrum-1/respysive-slide"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">https://github.com/scrum-1/respysive-slide</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">  (功能最完整，可與眾多Python模組結合)</span></span></p>
+<p style="padding-left: 30px;"><a href="https://github.com/tavallaie/pyreveal"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">https://github.com/tavallaie/pyreveal</span></span></a> </p>
+<p style="padding-left: 30px;"><a href="https://github.com/naviddianati/python-reveal"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">https://github.com/naviddianati/python-reveal</span></span></a> </p>
+<p style="padding-left: 30px;"><a href="https://github.com/apiad/auditorium"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">https://github.com/apiad/auditorium</span></span></a> </p>
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">專案簡介：分散式Reveal.js 簡報編輯系統</span></span></p>
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">這是一個使用 Flask 建立的 Web 編輯器，用於多人協作編輯 Reveal.js 簡報內容（以 Markdown 編寫），並貫穿 Git 作為儲存和版本控制工具。使用者可以在本地端啟動編輯介面，修改後使用自己的 GitHub Token 或 SSH 金鑰匙來 git push 到外部分支，從而保留作者身份與提交記錄。</span></span></p>
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">整個系統的設計理念為：</span></span></p>
 <ol>
-<li>本地運行：使用者 clone 後可在本地執行 Flask 網頁伺服器。</li>
-<li>Web 編輯介面：提供簡單的 Markdown 編輯器與 Reveal.js 預覽。</li>
-<li>Git 管理版本：使用者使用自己的 Git 身份（token 或 SSH）將內容推送到遠端分支。</li>
-<li>非同步協作：統一合併簡報內容透過 Pull Request 或 Git 合併流程。</li>
-<li>這套系統不需要後端帳號認證與 Git 操作，而是透過 GitHub 分支和 PR 工作流，達成簡潔、可追蹤、模組化的多人協作。</li>
+<li><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">本機運作：使用者複製後可在本機執行Flask網頁伺服器。</span></span></li>
+<li><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">Web 編輯簡介：提供簡單的 Markdown 編輯器和 Reveal.js 預覽。</span></span></li>
+<li><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">Git 管理版本：使用者使用自己的 Git 身分（token 或 SSH）將內容到分支分支。</span></span></li>
+<li><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">非同步協作：統一合併簡報內容分散 Pull Request 或 Git 合併流程。</span></span></li>
+<li><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">六個系統需要頭部帳號認證與 Git 操作，而是透過 GitHub 分支和 PR 工作流程，完成簡潔、可追蹤、模組化的多人協作。</span></span></li>
 </ol>
-<p>專案目錄架構</p>
-<pre class="brush:html;auto-links:false;toolbar:false" contenteditable="false">slides-editor/
-├── app.py                   # Flask 網頁應用主程式
-├── templates/
-│   └── editor.html          # Markdown 編輯頁面 + Reveal.js 預覽
-├── slides/
-│   └── slides.md            # 使用者實際編輯的簡報 Markdown 檔案
-├── requirements.txt         # Python 相依套件
-└── README.md                # 專案說明
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">專案目錄架構</span></span></p>
+<pre class="brush:html;auto-links:false;toolbar:false" contenteditable="false"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">幻燈片編輯器/</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+├── app.py # Flask 網頁應用程式</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+├── 模板/</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+│ └── editor.html # Markdown 編輯頁 + Reveal.js 預覽</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+├── 投影片/</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+│ └── slips.md # 使用者實際編輯的簡報 Markdown 文件</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+├──requirements.txt # Python 相依套件</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+└── README.md # 專案說明</span></span><span></span>
 </pre>
-<p>啟動本地 Flask Web 編輯器<br/><br/>功能描述：使用者在自己的電腦上執行 Flask 應用，開啟 localhost 編輯介面。<br/><br/>app.py</p>
-<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">from flask import Flask, render_template, request, redirect, url_for
-import os
-
-app = Flask(__name__)
-SLIDES_PATH = os.path.join("slides", "slides.md")
-
-@app.route("/", methods=["GET", "POST"])
-def editor():
-    if request.method == "POST":
-        markdown = request.form["markdown"]
-        with open(SLIDES_PATH, "w", encoding="utf-8") as f:
-            f.write(markdown)
-        return redirect(url_for("editor"))
-
-    with open(SLIDES_PATH, "r", encoding="utf-8") as f:
-        markdown = f.read()
-    return render_template("editor.html", content=markdown)
-
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">啟動描述本機Flask Web編輯器</span></span><br/><br/><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">功能：使用者在自己的電腦上執行Flask應用，開啟localhost編輯介面。</span></span><br/><br/><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">app.py</span></span></p>
+<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">from flask import Flask, render_template, request, redirect, url_for</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+導入作業系統</span></span><span></span>
+<span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+app = Flask(__name__)</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+SLIDES_PATH = os.path.join("slides", "slides.md")</span></span><span></span>
+<span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+@app.route("/", methods=["GET", "POST"])</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+def editor():</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+    如果請求方法 == "POST":</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+        markdown = request.form["markdown"]</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+        with open(SLIDES_PATH, "w", encoding="utf-8") as f:</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+            f.write(markdown)</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+        返回重定向(url_for("editor"))</span></span><span></span>
+<span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+    with open(SLIDES_PATH, "r", encoding="utf-8") as f:</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+        markdown = f.read()</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+    返回 render_template("editor.html", content=markdown)</span></span><span></span>
+<span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+如果 __name__ == "__main__":</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+    app.run(debug=True, port=5000)</span></span><span></span>
 </pre>
-<p>前端 Reveal.js + Markdown 編輯器<br/><br/>功能描述：提供網頁介面讓使用者編輯 Markdown，並即時預覽 Reveal.js 簡報。<br/><br/>templates/editor.html</p>
-<pre class="brush:html;auto-links:false;toolbar:false" contenteditable="false">&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head&gt;
-  &lt;meta charset="utf-8"&gt;
-  &lt;title&gt;簡報編輯器&lt;/title&gt;
-  &lt;script src="https://cdn.jsdelivr.net/npm/reveal.js@4/dist/reveal.min.js"&gt;&lt;/script&gt;
-  &lt;script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"&gt;&lt;/script&gt;
-  &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4/dist/reveal.css"&gt;
-  &lt;style&gt;
-    textarea { width: 100%; height: 300px; margin-bottom: 1em; font-family: monospace; }
-  &lt;/style&gt;
-&lt;/head&gt;
-&lt;body&gt;
-  &lt;h1&gt;Markdown 編輯器&lt;/h1&gt;
-  &lt;form method="POST"&gt;
-    &lt;textarea name="markdown"&gt;{{ content }}&lt;/textarea&gt;
-    &lt;br&gt;
-    &lt;button type="submit"&gt;儲存&lt;/button&gt;
-  &lt;/form&gt;
-
-  &lt;hr&gt;
-  &lt;h2&gt;Reveal.js 預覽&lt;/h2&gt;
-  &lt;div class="reveal"&gt;
-    &lt;div class="slides" id="slides"&gt;&lt;/div&gt;
-  &lt;/div&gt;
-
-  &lt;script&gt;
-    const markdown = document.querySelector("textarea").value;
-    const slidesDiv = document.getElementById("slides");
-
-    const slides = markdown.split(/^---$/m);
-    const html = slides.map(md =&gt; `&lt;section&gt;${marked.parse(md)}&lt;/section&gt;`).join('');
-    slidesDiv.innerHTML = html;
-
-    Reveal.initialize();
-  &lt;/script&gt;
-&lt;/body&gt;
-&lt;/html&gt;
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">簡介 Reveal.js + Markdown 編輯器</span></span><br/><br/><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">功能說明：提供網頁介面讓使用者編輯 Markdown，並即時預覽 Reveal.js 簡報。</span></span><br/><br/><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">templates/editor.html</span></span></p>
+<pre class="brush:html;auto-links:false;toolbar:false" contenteditable="false"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">&lt;!DOCTYPE html&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+&lt;html&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+&lt;head&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+  &lt;meta charset="utf-8"&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+  &lt;title&gt;簡報編輯器&lt;/title&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+  &lt;script src="https://cdn.jsdelivr.net/npm/reveal.js@4/dist/reveal.min.js"&gt;&lt;/script&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+  &lt;script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"&gt;&lt;/script&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+  &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4/dist/reveal.css"&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+  &lt;style&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+    textarea { width: 100%; height: 300px; margin-bottom: 1em; font-family: monospace; }</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+  &lt;/style&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+&lt;/head&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+&lt;body&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+  &lt;h1&gt;Markdown 編輯器&lt;/h1&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+  &lt;form method="POST"&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+    &lt;textarea name="markdown"&gt;{{ content }}&lt;/textarea&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+    &lt;br&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+    &lt;button type="submit"&gt;儲存&lt;/button&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+  &lt;/form&gt;</span></span><span></span>
+<span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+  &lt;hr&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+  &lt;h2&gt;Reveal.js 預覽&lt;/h2&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+  &lt;div class="reveal"&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+    &lt;div class="slides" id="slides"&gt;&lt;/div&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+  &lt;/div&gt;</span></span><span></span>
+<span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+  &lt;script&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+    const markdown = document.querySelector("textarea").value;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+    const slidesDiv = document.getElementById("slides");</span></span><span></span>
+<span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+    const slides = markdown.split(/^---$/m);</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+    const html = slides.map(md =&gt; `&lt;section&gt;${marked.parse(md)}&lt;/section&gt;`).join('');</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+    slidesDiv.innerHTML = html;</span></span><span></span>
+<span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+    Reveal.initialize();</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+  &lt;/script&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+&lt;/body&gt;</span></span><span></span><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">
+&lt;/html&gt;</span></span><span></span>
 </pre>
-<p>Git 操作由使用者本地負責（非後端）<br/><br/>功能描述：使用者在本地透過 CLI 執行 Git 操作，使用自己的身份進行 commit 與 push。<br/><br/>指令建議（你可印在前端或 README 中）</p>
-<pre class="brush:js;auto-links:false;toolbar:false" contenteditable="false"># 取得最新版本
-git pull origin main
-
-# 建立新的分支
-git checkout -b users/your-name-update
-
-# 加入修改的檔案
-git add slides/slides.md
-
-# 提交變更
-git commit -m "新增第 5 頁投影片"
-
-# 推送到遠端分支（使用者自己的 Git 身份）
-git push origin users/your-name-update
-
-# 接著到 GitHub 建立 Pull Request
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">Git 操作由使用者本地負責（非倉庫）</span></span><br/><br/><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">功能描述：使用者在本地透過 CLI 執行 Git 操作，使用自己的身分進行提交和推送。</span></span><br/><br/><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">指令建議（您可以印在前端或 README 中）</span></span></p>
+<pre class="brush:js;auto-links:false;toolbar:false" contenteditable="false"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"># 取得最新版本</span></span><span></span>
+git pull origin main<span></span>
+<span></span>
+# 建立新的分支<span></span>
+git checkout -b users/your-name-update<span></span>
+<span></span>
+# 加入修改的檔案<span></span>
+git add slides/slides.md<span></span>
+<span></span>
+# 提交變更<span></span>
+git commit -m "新增第 5 頁投影片"<span></span>
+<span></span>
+# 推送到遠端分支（使用者自己的 Git 身份）<span></span>
+git push origin users/your-name-update<span></span>
+<span></span>
+# 接著到 GitHub 建立 Pull Request<span></span>
 </pre>
 <p>使用者操作指令</p>
-<pre class="brush:js;auto-links:false;toolbar:false" contenteditable="false">git checkout -b users/你的名字-20250926
-git add slides/slides.md
-git commit -m "更新簡報內容"
+<pre class="brush:js;auto-links:false;toolbar:false" contenteditable="false">git checkout -b users/你的名字-20250926<span></span>
+git add slides/slides.md<span></span>
+git commit -m "更新簡報內容"<span></span>
 git push origin users/你的名字-20250926</pre>
 <p></p>
 <h1>Python</h1>
@@ -440,21 +137,21 @@ git push origin users/你的名字-20250926</pre>
 <p>在 Python 中，變數宣告（Variable Declaration）相較於其他語言（如 Java 或 C++）來得簡單，因為 Python 是動態型別語言。以下是 Python 宣告變數的原則與最佳實踐：</p>
 <p><span style="background-color: #ffff99;">一、不需明確指定型別</span></p>
 <p style="padding-left: 30px;"><span style="background-color: #ccffcc;">Python 是動態型別語言，你不需要指定變數型別</span>，解譯器會根據賦值自動判斷。</p>
-<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">x = 10        # 整數
-name = "Amy"  # 字串
-pi = 3.14     # 浮點數
+<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">x = 10        # 整數<span></span>
+name = "Amy"  # 字串<span></span>
+pi = 3.14     # 浮點數<span></span>
 </pre>
 <p><span style="background-color: #ffff99;">二、變數名稱命名規則</span></p>
 <p style="padding-left: 30px;">合法命名：<br/><br/><span style="background-color: #ccffcc;">可以包含字母、數字、底線（_）</span><br/><br/><span style="background-color: #ccffcc;">不能以數字開頭</span><br/><br/><span style="background-color: #ccffcc;">不能使用 Python 保留的關鍵字(35個)</span>:</p>
 <p style="padding-left: 60px;">['False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await', 'break', 'class', 'continue', '<span style="background-color: #ffcc99;">def</span>', 'del', 'elif', '<span style="background-color: #ffcc99;">else</span>', 'except', 'finally', '<span style="background-color: #ffcc99;">for</span>', 'from', 'global', '<span style="background-color: #ffcc99;">if</span>', '<span style="background-color: #ffcc99;">import</span>', 'in', 'is', 'lambda', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'try', 'while', 'with', 'yield']</p>
 <p style="padding-left: 30px;">利用 keyword 模組，<a href="https://mde.tw/cp_demo/content/Brython.html?src=https://gist.githubusercontent.com/mdecycu/fa7d2a68d1569596f62e5b7739a83119/raw/da44925c2f9694f825c2525edfc80367f327ca5e/print_keywords.py">列出 Python 所保留的關鍵字</a>:</p>
-<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">import keyword
-
-# 印出關鍵字清單
-print("Python 保留關鍵字有：")
-print(keyword.kwlist)
-
-# 印出總數
+<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">import keyword<span></span>
+<span></span>
+# 印出關鍵字清單<span></span>
+print("Python 保留關鍵字有：")<span></span>
+print(keyword.kwlist)<span></span>
+<span></span>
+# 印出總數<span></span>
 print("\n關鍵字總數：", len(keyword.kwlist))</pre>
 <p><span style="background-color: #ffff99;">三、使用有意義的變數名稱</span></p>
 <p style="padding-left: 30px;">例如: grid_width = 10</p>
@@ -463,12 +160,12 @@ print("\n關鍵字總數：", len(keyword.kwlist))</pre>
 <p><span style="background-color: #ffff99;">五、Python 變數名稱區分大小寫</span></p>
 <p style="padding-left: 30px;">length 與 Length 是兩個不同的變數名稱</p>
 <p><span style="background-color: #ffff99;">六、變數可重新指派不同型別（動態型別特性）</span></p>
-<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">x = 100       # 整數
-x = "hello"   # 變成字串
+<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">x = 100       # 整數<span></span>
+x = "hello"   # 變成字串<span></span>
 </pre>
 <p><span style="background-color: #ffff99;">七、可同時宣告多個變數（多重賦值）</span></p>
-<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">a, b, c = 1, 2, 3
-x = y = z = 0  # 所有變數都為 0
+<pre class="brush:py;auto-links:false;toolbar:false" contenteditable="false">a, b, c = 1, 2, 3<span></span>
+x = y = z = 0  # 所有變數都為 0<span></span>
 </pre>
 <p></p>
 <hr/>
@@ -809,8 +506,8 @@ x = y = z = 0  # 所有變數都為 0
 <li><strong>難以協作：</strong> 沒有 CMSIMDE，學生將難以在一個平台上集中管理開發、測試和版本控制，協作會變得更加複雜。</li>
 </ul>
 <h1>Brython</h1>
-<p><a href="https://brython.info/">Brython</a> 是一個將 <a href="https://en.wikipedia.org/wiki/Python_(programming_language)">Python</a> 語法編譯為 <a href="https://developer.mozilla.org/zh-TW/docs/Web/JavaScript">JavaScript</a> 的工具，能直接在瀏覽器中以 <a href="https://en.wikipedia.org/wiki/Python_(programming_language)">Python</a> 撰寫前端網頁程式。</p>
-<p><button id="add1to100">1 add to 100</button><button id="robot1">機器人巡邏</button><button id="free_walk">自由行</button></p>
+<p><a href="https://brython.info/"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">Brython</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">是一個將</span></span><a href="https://en.wikipedia.org/wiki/Python_(programming_language)"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">Python</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">語法編譯為</span></span><a href="https://developer.mozilla.org/zh-TW/docs/Web/JavaScript"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">JavaScript</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">的工具，可以直接在瀏覽器中以</span></span><a href="https://en.wikipedia.org/wiki/Python_(programming_language)"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">Python</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">編寫前面的網頁程式。</span></span></p>
+<p><button id="add1to100"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">1 加到 100</span></span></button><button id="robot1"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">機器人巡邏</span></span></button><button id="free_walk"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">自由行</span></span></button></p>
 <!-- 導入 brython 程式庫 -->
 <p>
 <script src="/static/brython.js"></script>
@@ -977,11 +674,11 @@ doc["add1to100"].bind('click', add)
 <div id="kw_editor1" style="width: 600px; height: 300px;"></div>
 <p><!-- 以下的表單與按鈕與前面的 Javascript doSave 函式以及 FileSaver.min.js 互相配合 --></p>
 <p><!-- 存擋表單開始 --></p>
-<form><label>Filename: <input id="kw_filename" placeholder="input file name" type="text"/>.py</label> <input onclick="doSave('kw_py_src1', 'kw_filename1');" type="submit" value="Save"/></form>
+<form><label><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">檔案名稱：</span></span><input id="kw_filename" placeholder="輸入檔名" type="text"/><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">.py</span></span></label> <span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><input onclick="doSave('kw_py_src1', 'kw_filename1');" type="submit" value="保存"/></span></span></form>
 <p><!-- 存擋表單結束 --></p>
 <p></p>
 <p><!-- 執行與清除按鈕開始 --></p>
-<p><button id="kw_run1">Run</button> <button id="kw_show_console1">Output</button> <button id="kw_clear_console1">清除輸出區</button><button id="clear_bd1">清除繪圖區</button><button onclick="window.location.reload()">Reload</button></p>
+<p><button id="kw_run1"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">跑步</span></span></button> <button id="kw_show_console1"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">輸出</span></span></button> <button id="kw_clear_console1"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">明確輸出區</span></span></button><button id="clear_bd1"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">清晰的繪圖區</span></span></button><button onclick="window.location.reload()"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">重新載入</span></span></button></p>
 <p><!-- 執行與清除按鈕結束 --></p>
 <p></p>
 <p><!-- 程式執行 ouput 區 --></p>
@@ -989,8 +686,8 @@ doc["add1to100"].bind('click', add)
 <p><!-- Brython 程式執行的結果, 都以 brython_div1 作為切入位置 --></p>
 <div id="brython_div1"></div>
 <!-- editor1 結束 --><hr/><!-- ########################################## -->
-<p>從 1 累加到 100 part2:</p>
-<p><button id="add1to100part2">1 add to 100</button><button id="cango_three_gears">cango_three_gears</button><button id="bsnake">BSnake</button><button id="aitetris">AI Tetris</button></p>
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">從1累加到100第2部分：</span></span></p>
+<p><button id="add1to100part2"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">1 加到 100</span></span></button><button id="cango_three_gears"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">cango_three_geras</span></span></button><button id="bsnake"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">BSnake</span></span></button><button id="aitetris"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">人工智慧俄羅斯方塊</span></span></button></p>
 <p><!-- 請注意, 這裡使用 Javascript 將 localStorage["kw_py_src2"] 中存在近端瀏覽器的程式碼, 由使用者決定存檔名稱--></p>
 <p>
 <script type="text/python3">
@@ -1091,11 +788,11 @@ doc["aitetris"].bind("click", aitetris.do)
 <div id="kw_editor2" style="width: 600px; height: 300px;"></div>
 <p><!-- 以下的表單與按鈕與前面的 Javascript doSave 函式以及 FileSaver.min.js 互相配合 --></p>
 <p><!-- 存擋表單開始 --></p>
-<form><label>Filename: <input id="kw_filename2" placeholder="input file name" type="text"/>.py</label> <input onclick="doSave('kw_py_src2', 'kw_filename2');" type="submit" value="Save"/></form>
+<form><label><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">檔案名稱：</span></span><input id="kw_filename2" placeholder="輸入檔名" type="text"/><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">.py</span></span></label> <span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"><input onclick="doSave('kw_py_src2', 'kw_filename2');" type="submit" value="保存"/></span></span></form>
 <p><!-- 存擋表單結束 --></p>
 <p></p>
 <p><!-- 執行與清除按鈕開始 --></p>
-<p><button id="kw_run2">Run</button> <button id="kw_show_console2">Output</button> <button id="kw_clear_console2">清除輸出區</button><button id="clear_bd2">清除繪圖區</button><button onclick="window.location.reload()">Reload</button></p>
+<p><button id="kw_run2"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">跑步</span></span></button> <button id="kw_show_console2"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">輸出</span></span></button> <button id="kw_clear_console2"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">明確輸出區</span></span></button><button id="clear_bd2"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">清晰的繪圖區</span></span></button><button onclick="window.location.reload()"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">重新載入</span></span></button></p>
 <p><!-- 執行與清除按鈕結束 --></p>
 <p></p>
 <p><!-- 程式執行 ouput 區 --></p>
@@ -1105,15 +802,15 @@ doc["aitetris"].bind("click", aitetris.do)
 <!-- editor2 結束 --><hr/>
 <p></p>
 <h2>Pyodide3</h2>
-<p>Pyodide3 則在 <a href="https://mde.tw/cp2025/content/Pyodide.html">Pyodide</a> 與 <a href="https://mde.tw/cp2025/content/Pyodide2.html">Pyodide2</a> 頁面架構下，進一步導入 <a href="https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/9f43571ec070ea3e24b083525ee27275a96efcc8/robot_w_world.py">robot_w_world.py</a>，在既有的水平圍牆 <a href="https://mde.tw/cp2025/reeborg/src/images/north.png">north.png</a> 與垂直圍牆 <a href="https://mde.tw/cp2025/reeborg/src/images/east.png">east.png</a> 檔案之外，加入 <a href="https://mde.tw/cp2025/reeborg/src/images/carrot.png">carrot.png</a>、<a href="https://mde.tw/cp2025/reeborg/src/images/grass.png">grass.png</a> 與 <a href="https://mde.tw/cp2025/reeborg/src/images/pale_grass.png">pale_grass.png</a> 等圖檔。並且擴充可從 URL 讀進 json 格式的 world 變數功能，以便製作出更多元的場景任務，要求機器人執行。</p>
-<p>其中 src URL 變數，可以將網路上的機器人控制程式導入 Pyodide3 頁面外，world URL 變數則可以導入源自 <a href="https://mde.tw/reeborg">Reeborg</a> 機器人程式所設定的 json 格式場景。</p>
-<p>由於 Reeborg 系統中的 png 圖檔均非透明背景，<a href="https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/9f43571ec070ea3e24b083525ee27275a96efcc8/robot_w_world.py">robot_w_world.py</a> 必須利用 HTML 中的 CANVAS，將關鍵的白色背景，以透明的方式顯示。</p>
-<p>src URL 變數讀進 <a href="https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/8ac3ce859d6aec327b7859e091168270d6a951f7/pyodide2_turn_right.py">turn_right 程式</a>，而 world URL 變數則讀進 <a href="https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/43517f3f54a5ac24d55d5a5cf8d316e6db2f3b65/harvest2.json">harvest2.json</a>，執行<a href="https://mde.tw/cp2025/content/Pyodide3.html?src=https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/8ac3ce859d6aec327b7859e091168270d6a951f7/pyodide2_turn_right.py&amp;world=https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/43517f3f54a5ac24d55d5a5cf8d316e6db2f3b65/harvest2.json">結果</a>。</p>
-<p>讀進 <a href="https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/1b1c26eca7f5d772c6301bae865efaddb00a87bb/harvest3.json">harvest3.json</a>, 執行<a href="https://mde.tw/cp2025/content/Pyodide3.html?src=https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/8ac3ce859d6aec327b7859e091168270d6a951f7/pyodide2_turn_right.py&amp;world=https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/9f43571ec070ea3e24b083525ee27275a96efcc8/harvest3.json">結果</a>。</p>
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">Pyodide3則在</span></span><a href="https://mde.tw/cp2025/content/Pyodide.html"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">Pyodide</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">與</span></span><a href="https://mde.tw/cp2025/content/Pyodide2.html"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">Pyodide2</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">頁面架構下，進一步導入</span></span><a href="https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/9f43571ec070ea3e24b083525ee27275a96efcc8/robot_w_world.py"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">robot_w_world.py</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">，在原來的水平圍牆</span></span><a href="https://mde.tw/cp2025/reeborg/src/images/north.png"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">north.png</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">與垂直圍牆</span></span><a href="https://mde.tw/cp2025/reeborg/src/images/east.png"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">east.png</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">檔案之外，加入</span></span><a href="https://mde.tw/cp2025/reeborg/src/images/carrot.png"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">carrot.png</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">、</span></span><a href="https://mde.tw/cp2025/reeborg/src/images/grass.png"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">grass.png</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">與</span></span><a href="https://mde.tw/cp2025/reeborg/src/images/pale_grass.png"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">pale_grass.png</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">等圖檔。並補充可從URL讀進json格式的世界變數功能，以便製作出更多樣化的場景任務，要求機器人執行。</span></span></p>
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">其中src URL變數，可以將網路上的機器人控製程式匯入Pyodide3頁面外，world URL變數則可以匯入先前</span></span><a href="https://mde.tw/reeborg"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">Reeborg</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">機器人控製程式所設定的json格式場景。</span></span></p>
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">由於Reeborg系統中的png圖檔均非透明背景，</span></span><a href="https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/9f43571ec070ea3e24b083525ee27275a96efcc8/robot_w_world.py"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">robot_w_world.py</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;"> 必須利用HTML中的CANVAS，將關鍵的白色背景，以透明的方式顯示。</span></span></p>
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">src URL 變數則讀進</span></span><a href="https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/8ac3ce859d6aec327b7859e091168270d6a951f7/pyodide2_turn_right.py"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">turn_right 程序</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">，而 world URL 變數則讀進</span></span><a href="https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/43517f3f54a5ac24d55d5a5cf8d316e6db2f3b65/harvest2.json"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">harvest2.json</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">，執行</span></span><a href="https://mde.tw/cp2025/content/Pyodide3.html?src=https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/8ac3ce859d6aec327b7859e091168270d6a951f7/pyodide2_turn_right.py&amp;world=https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/43517f3f54a5ac24d55d5a5cf8d316e6db2f3b65/harvest2.json"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">結果</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">。</span></span></p>
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">讀進</span></span><a href="https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/1b1c26eca7f5d772c6301bae865efaddb00a87bb/harvest3.json"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">harvest3.json</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">，執行</span></span><a href="https://mde.tw/cp2025/content/Pyodide3.html?src=https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/8ac3ce859d6aec327b7859e091168270d6a951f7/pyodide2_turn_right.py&amp;world=https://gist.githubusercontent.com/mdecycu/ec4bb35dd0769e7a83d2a9fa57878a67/raw/9f43571ec070ea3e24b083525ee27275a96efcc8/harvest3.json"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">結果</span></span></a><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">。</span></span></p>
 <p>
 <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 </p>
-<p><button id="version">version</button> <button id="hello_button">hello</button> <button id="add1to100">1 add to 100</button> <button id="robot1">機器人巡邏</button> <button id="free_walk">自由行</button> <button id="numpy_ode">numpy_ode</button></p>
+<p><button id="version"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">版本</span></span></button> <button id="hello_button"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">你好</span></span></button> <button id="add1to100"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">1 加到 100</span></span></button> <button id="robot1"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">機器人巡邏</span></span></button> <button id="free_walk"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">自由行</span></span></button> <button id="numpy_ode"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">numpy_ode</span></span></button></p>
 <!-- Ace Editor Scripts -->
 <p>
 <script src="/static/ace/FileSaver.min.js"></script>
@@ -1125,17 +822,17 @@ doc["aitetris"].bind("click", aitetris.do)
 </p>
 <!-- Editor 1 -->
 <div id="kw_editor1" style="width: 600px; height: 300px;"></div>
-<p><button id="kw_run1">Run</button> <button id="kw_output1">Output</button> <button id="kw_clear_console1">清除輸出區</button> <button onclick="location.reload()">Reload</button></p>
+<p><button id="kw_run1"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">跑步</span></span></button> <button id="kw_output1"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">輸出</span></span></button> <button id="kw_clear_console1"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">明確輸出區</span></span></button> <button onclick="location.reload()"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">重新載入</span></span></button></p>
 <p><textarea id="kw_console1"></textarea></p>
 <div id="pyodide_div1"></div>
 <div id="mpl_output1"></div>
 <div id="brython_div1"></div>
 <hr/>
-<p>從 1 累加到 100 part2:</p>
-<p><button id="add1to100part2">1 add to 100</button></p>
+<p><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">從1累加到100第2部分：</span></span></p>
+<p><button id="add1to100part2"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">1 加到 100</span></span></button></p>
 <!-- Editor 2 -->
 <div id="kw_editor2" style="width: 600px; height: 300px;"></div>
-<p><button id="kw_run2">Run</button> <button id="kw_output2">Output</button> <button id="kw_clear_console2">清除輸出區</button> <button onclick="location.reload()">Reload</button></p>
+<p><button id="kw_run2"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">跑步</span></span></button> <button id="kw_output2"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">輸出</span></span></button> <button id="kw_clear_console2"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">明確輸出區</span></span></button> <button onclick="location.reload()"><span dir="auto" style="vertical-align: inherit;"><span dir="auto" style="vertical-align: inherit;">重新載入</span></span></button></p>
 <p><textarea id="kw_console2"></textarea></p>
 <div id="pyodide_div2"></div>
 <div id="mpl_output2"></div>
